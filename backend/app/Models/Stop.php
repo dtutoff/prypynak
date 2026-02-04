@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stop extends Model
 {
-    //
+    public function transports()
+    {
+        return $this->belongsToMany(Transport::class, 'stop_transport');
+    }
+
 }
