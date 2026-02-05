@@ -47,18 +47,25 @@ class TransportSeeder extends Seeder
             $transport->stops()->syncWithoutDetaching([
                 $stop->id => ['order' => $order++, 'is_backward' => $isBackward],
             ]);
+        }
 
-            $time = \Carbon\Carbon::createFromTime(6, 0);
-            while ($time->hour < 23) {
+        $departureFromTerminal = \Carbon\Carbon::createFromTime(6, 0, 0);
+
+        while ($departureFromTerminal->hour < 23) {
+            $currentTimeAtStop = $departureFromTerminal->copy();
+
+            foreach ($stops as $stop) {
                 \App\Models\Schedule::create([
                     'transport_id' => $transport->id,
                     'stop_id' => $stop->id,
-                    'arrival_time' => $time->format('H:i:s'),
+                    'arrival_time' => $currentTimeAtStop->format('H:i:s'),
                     'day_type' => 'workday',
                     'is_backward' => $isBackward,
                 ]);
-                $time->addMinutes(20);
+
+                $currentTimeAtStop->addMinutes(5);
             }
+            $departureFromTerminal->addMinutes(20);
         }
     }
 }
