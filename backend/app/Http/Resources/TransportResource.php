@@ -14,6 +14,21 @@ class TransportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $stops = $this->relationLoaded('stops') ? $this->stops : collect();
+
+        return [
+            'id' => $this->id,
+            'number' => $this->number,
+            'type' => $this->type,
+            'name' => $this->name,
+
+            // Используем фильтрацию через функцию
+            'forward_stops' => StopResource::collection(
+                $stops->filter(fn($stop) => $stop->pivot->is_backward === false)->values(),
+            ),
+            'backward_stops' => StopResource::collection(
+                $stops->filter(fn($stop) => $stop->pivot->is_backward === true)->values(),
+            ),
+        ];
     }
 }

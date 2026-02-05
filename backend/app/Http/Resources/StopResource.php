@@ -14,6 +14,11 @@ class StopResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'order' => $this->pivot ? $this->pivot->order : null,
+            'is_backward' => $this->pivot ? (bool) $this->pivot->is_backward : false,
+        ];
     }
 }
