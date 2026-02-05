@@ -8,4 +8,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/transport', [TransportController::class, 'index']);
+Route::apiResource('transports', TransportController::class)->only(['index', 'show']);
+

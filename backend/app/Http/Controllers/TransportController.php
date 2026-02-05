@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Api\TransportIndexRequest;
+use App\Http\Resources\TransportResource;
+
 class TransportController extends Controller
 {
-    public function index()
+    public function index(TransportIndexRequest $request)
     {
-        $transports = \App\Models\Transport::with(['stops', 'schedules'])->first();
+        $params = $request->validated();
 
-        dd($transports->toArray());
+        $transports = \App\Models\Transport::query()
+            ->when($params['search'] ?? null, fn($q, $search) => $q->where('number', 'like', "%{$search}%"))
+            ->when($params['type'] ?? null, fn($q, $type) => $q->where('type', $type))
+            ->orderByRaw('number::integer ASC')
+            ->paginate(15);
+
+        return TransportResource::collection($transports);
     }
 }
