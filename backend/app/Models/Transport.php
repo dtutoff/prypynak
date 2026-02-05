@@ -13,4 +13,9 @@ class Transport extends Model
             ->withPivot(['order', 'is_backward'])
             ->orderBy('pivot_order');
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

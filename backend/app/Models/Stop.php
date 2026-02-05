@@ -11,4 +11,8 @@ class Stop extends Model
         return $this->belongsToMany(Transport::class, 'stop_transport');
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }
