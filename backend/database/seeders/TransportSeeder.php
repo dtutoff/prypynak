@@ -12,66 +12,53 @@ class TransportSeeder extends Seeder
      */
     public function run(): void
     {
-        // Остановки
-        $stop1 = \App\Models\Stop::firstOrCreate(['name' => 'Микрорайон Казимировка']);
-        $stop2 = \App\Models\Stop::firstOrCreate(['name' => 'Улица Космонавтов']);
-        $stop3 = \App\Models\Stop::firstOrCreate(['name' => 'Площадь Орджоникидзе']);
-        $stop4 = \App\Models\Stop::firstOrCreate(['name' => 'Площадь Ленина']);
-        $stop5 = \App\Models\Stop::firstOrCreate(['name' => 'Диагностический центр']);
-        $stop6 = \App\Models\Stop::firstOrCreate(['name' => 'Могилёвский рынок']);
-        $stop7 = \App\Models\Stop::firstOrCreate(['name' => 'Проспект Мира']);
-        $stop8 = \App\Models\Stop::firstOrCreate(['name' => 'Гостиница «Турист»']);
-        $stop9 = \App\Models\Stop::firstOrCreate(['name' => 'Улица 30 лет Победы']);
-        $stop10 = \App\Models\Stop::firstOrCreate(['name' => 'Железнодорожный вокзал']);
+        // 1. Список остановок
+        $stopNames = [
+            'Микрорайон Казимировка', 'Улица Космонавтов', 'Площадь Орджоникидзе',
+            'Площадь Ленина', 'Диагностический центр', 'Могилёвский рынок',
+            'Проспект Мира', 'Гостиница «Турист»', 'Улица 30 лет Победы',
+            'Железнодорожный вокзал',
+        ];
 
-        // Транспорт
-        $bus1 = \App\Models\Transport::firstOrCreate([
-            'number' => '4',
-            'type' => 'bus',
-            'name' => 'Казимировка — Приднепровье',
-        ]);
+        $stopsPool = collect($stopNames)->map(function ($name) {
+            return \App\Models\Stop::firstOrCreate(['name' => $name]);
+        });
 
-        $bus2 = \App\Models\Transport::firstOrCreate([
-            'number' => '6',
-            'type' => 'bus',
-            'name' => 'Площадь Ленина — Проспект Мира',
-        ]);
+        // 2. Список автобусов
+        $busNumbers = ['4', '2', '40', '12', '1'];
 
-        // Связь автобусов и остановок
-        // Путь Туда
-        $bus1->stops()->attach([
-            $stop1->id => ['order' => 1, 'is_backward' => false],
-            $stop2->id => ['order' => 2, 'is_backward' => false],
-            $stop3->id => ['order' => 3, 'is_backward' => false],
-            $stop4->id => ['order' => 4, 'is_backward' => false],
-            $stop5->id => ['order' => 5, 'is_backward' => false],
-        ]);
+        foreach ($busNumbers as $number) {
+            $transport = \App\Models\Transport::firstOrCreate(
+                ['number' => $number, 'type' => 'bus'],
+                ['name' => "Маршрут №$number (Тестовый)"],
+            );
 
-        // Путь Обратно
-        $bus1->stops()->attach([
-            $stop5->id => ['order' => 1, 'is_backward' => true],
-            $stop4->id => ['order' => 2, 'is_backward' => true],
-            $stop3->id => ['order' => 3, 'is_backward' => true],
-            $stop2->id => ['order' => 4, 'is_backward' => true],
-            $stop1->id => ['order' => 5, 'is_backward' => true],
-        ]);
+            $routeStops = $stopsPool->random(rand(6, 8));
 
-        // Путь Туда
-        $bus2->stops()->attach([
-            $stop6->id => ['order' => 1, 'is_backward' => false],
-            $stop7->id => ['order' => 2, 'is_backward' => false],
-            $stop8->id => ['order' => 3, 'is_backward' => false],
-            $stop9->id => ['order' => 4, 'is_backward' => false],
-            $stop10->id => ['order' => 5, 'is_backward' => false],
-        ]);
+            $this->buildRoute($transport, $routeStops, false);
+            $this->buildRoute($transport, $routeStops->reverse(), true);
+        }
+    }
 
-        // Путь Обратно
-        $bus2->stops()->attach([
-            $stop10->id => ['order' => 1, 'is_backward' => true],
-            $stop9->id => ['order' => 2, 'is_backward' => true],
-            $stop8->id => ['order' => 3, 'is_backward' => true],
-            $stop7->id => ['order' => 4, 'is_backward' => true],
-            $stop6->id => ['order' => 5, 'is_backward' => true],
-        ]);
+    private function buildRoute($transport, $stops, $isBackward)
+    {
+        $order = 1;
+        foreach ($stops as $stop) {
+            $transport->stops()->syncWithoutDetaching([
+                $stop->id => ['order' => $order++, 'is_backward' => $isBackward],
+            ]);
+
+            $time = \Carbon\Carbon::createFromTime(6, 0);
+            while ($time->hour < 23) {
+                \App\Models\Schedule::create([
+                    'transport_id' => $transport->id,
+                    'stop_id' => $stop->id,
+                    'arrival_time' => $time->format('H:i:s'),
+                    'day_type' => 'workday',
+                    'is_backward' => $isBackward,
+                ]);
+                $time->addMinutes(20);
+            }
+        }
     }
 }
