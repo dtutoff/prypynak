@@ -44,7 +44,7 @@ class TransportSeeder extends Seeder
     {
         $order = 1;
         foreach ($stops as $stop) {
-            $transport->stops()->syncWithoutDetaching([
+            $transport->stops()->attach([
                 $stop->id => ['order' => $order++, 'is_backward' => $isBackward],
             ]);
         }
