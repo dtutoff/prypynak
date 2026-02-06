@@ -17,8 +17,12 @@ class StopResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'order' => $this->pivot ? $this->pivot->order : null,
-            'is_backward' => $this->pivot ? (bool) $this->pivot->is_backward : false,
+
+            'order' => $this->whenPivotLoaded('stop_transport', fn() => $this->pivot->order),
+            'is_backward_route' => $this->whenPivotLoaded('stop_transport', fn() => (bool) $this->pivot->is_backward),
+
+            'transports' => TransportResource::collection($this->whenLoaded('transports')),
+            'schedules' => ScheduleResource::collection($this->whenLoaded('schedules')),
         ];
     }
 }

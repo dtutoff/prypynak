@@ -14,6 +14,14 @@ class ScheduleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'arrival_time' => $this->arrival_time,
+            'day_type' => $this->day_type,
+            'is_backward' => (bool) $this->is_backward,
+
+            'transport_id' => $this->transport_id,
+
+            'transport_number' => $this->whenLoaded('transport', fn() => $this->transport->number),
+        ];
     }
 }
