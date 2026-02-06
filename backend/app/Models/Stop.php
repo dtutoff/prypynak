@@ -15,4 +15,9 @@ class Stop extends Model
     {
         return $this->hasMany(Schedule::class);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }

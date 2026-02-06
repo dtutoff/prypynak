@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\StopResource;
 use App\Models\Stop;
+use Illuminate\Http\Request;
+
 
 class StopController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $stops = Stop::orderBy('name')->get();
+        $stops = Stop::query()
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'ilike', "%{$name}%");
+            })
+            ->orderBy('name')
+            ->get();
+
         return StopResource::collection($stops);
     }
 
@@ -26,7 +34,7 @@ class StopController extends Controller
                 $query
                     ->where('day_type', $dayType)
                     ->where('arrival_time', '>=', $currentTime)
-                    ->with('transport') // Чтобы ресурс знал номер автобуса
+                    ->with('transport')
                     ->orderBy('arrival_time')
                     ->limit(10);
             },

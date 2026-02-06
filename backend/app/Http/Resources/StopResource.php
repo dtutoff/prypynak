@@ -17,6 +17,7 @@ class StopResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'slug' => $this->slug,
 
             'order' => $this->whenPivotLoaded('stop_transport', fn() => $this->pivot->order),
             'is_backward_route' => $this->whenPivotLoaded('stop_transport', fn() => (bool) $this->pivot->is_backward),
