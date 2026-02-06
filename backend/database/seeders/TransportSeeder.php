@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TransportSeeder extends Seeder
 {
@@ -21,7 +22,7 @@ class TransportSeeder extends Seeder
         ];
 
         $stopsPool = collect($stopNames)->map(function ($name) {
-            return \App\Models\Stop::firstOrCreate(['name' => $name]);
+            return \App\Models\Stop::firstOrCreate(['name' => $name, 'slug' => Str::slug($name)]);
         });
 
         // 2. Список автобусов
