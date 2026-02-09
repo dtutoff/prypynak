@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\StopController;
-use App\Http\Controllers\TransportController;
+use App\Http\Controllers\Api\v1\StopController;
+use App\Http\Controllers\Api\v1\TransportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
