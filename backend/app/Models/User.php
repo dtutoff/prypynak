@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function favoriteStops()
+    {
+        return $this->belongsToMany(Stop::class, 'stop_user')->withTimestamps();
+    }
 }
