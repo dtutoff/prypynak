@@ -14,8 +14,9 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('stops', StopController::class)->only(['index', 'show']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', fn(Request $request) => $request->user());
-        Route::post('/stops/{stop}/favorite', [FavoriteController::class, 'toggle']);
+        Route::get('user', fn(Request $request) => $request->user());
+        Route::post('stops/{stop}/favorite', [FavoriteController::class, 'toggle']);
+        Route::get('favorites/stops', [FavoriteController::class, 'index']);
     });
 });
 
