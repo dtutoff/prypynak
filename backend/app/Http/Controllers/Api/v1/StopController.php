@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Requests\Api\v1\StopIndexRequest;
 use App\Http\Resources\StopResource;
 use App\Models\Stop;
-use Illuminate\Http\Request;
 
 
 class StopController extends Controller
 {
-    public function index(Request $request)
+    public function index(StopIndexRequest $request)
     {
+        $params = $request->validated();
+
         $stops = Stop::query()
-            ->when($request->name, function ($query, $name) {
+            ->when($params->name, function ($query, $name) {
                 $query->where('name', 'ilike', "%{$name}%");
             })
             ->orderBy('name')
