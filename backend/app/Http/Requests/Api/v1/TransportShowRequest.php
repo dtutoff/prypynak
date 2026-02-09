@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\Api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TransportIndexRequest extends FormRequest
+class TransportShowRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class TransportIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search' => ['nullable', 'string', 'max:10'],
-            'page' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'type' => ['nullable', 'string', 'in:bus,trolleybus'],
+            'direction' => ['nullable', 'in:forward,backward'],
+            'day_type' => ['nullable', 'in:workday,weekend'],
         ];
     }
 }

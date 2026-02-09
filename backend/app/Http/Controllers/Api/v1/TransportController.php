@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Api\TransportIndexRequest;
-use App\Http\Requests\Api\TransportShowRequest;
+use App\Http\Requests\Api\v1\TransportIndexRequest;
+use App\Http\Requests\Api\v1\TransportShowRequest;
 use App\Http\Resources\TransportResource;
 use App\Models\Transport;
 
