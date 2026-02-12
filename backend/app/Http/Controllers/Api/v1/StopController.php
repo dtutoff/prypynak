@@ -11,14 +11,12 @@ class StopController extends Controller
 {
     public function index(StopIndexRequest $request)
     {
-        $params = $request->validated();
-
         $stops = Stop::query()
-            ->when($params->name, function ($query, $name) {
+            ->when($request->validated('name'), function ($query, $name) {
                 $query->where('name', 'ilike', "%{$name}%");
             })
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
 
         return StopResource::collection($stops);
     }
