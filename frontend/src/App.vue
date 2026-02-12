@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1 class="text-3xl font-bold text-blue-500">Hello Prypynak!</h1>
+  <router-view/>
 </template>
 
 <style scoped>
