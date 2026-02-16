@@ -1,16 +1,16 @@
 export interface User {
-    id: number;
-    name: string;
-    email: string;
+  id: number
+  name: string
+  email: string
 }
 
 export interface AuthResponse {
-    access_token: string;
-    token_type: string;
-    user: User;
+  access_token: string
+  token_type: string
+  user: User
 }
 
 export interface LoginCredentials {
-    email: string;
-    password: string;
+  email: string
+  password: string
 }
